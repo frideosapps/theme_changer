@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'blocs/bloc_provider.dart';
 import 'screens/settings.dart';
 
 // AppBar actions
 enum ActionPage { info, settings, help }
 
 class HomePage extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   @override
-  Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context);
+  void initState() {
+    super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     var expansionTileStyle =
         TextStyle(fontSize: 14.0, fontStyle: FontStyle.italic);
 
@@ -51,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                         alignment: Alignment.center, child: Text('HELP PAGE')));
                 break;
               case ActionPage.settings:
-                page = SettingsPage(bloc: bloc);
+                page = SettingsPage();
                 break;
               default:
                 break;
@@ -126,7 +127,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            AboutListTile(child: Text('About this app'),),
+            AboutListTile(
+              child: Text('About this app'),
+            ),
           ],
         ),
       ),

@@ -1,58 +1,59 @@
 import 'package:flutter/material.dart';
 
+import 'package:frideos/frideos.dart';
+
 import 'src/homepage.dart';
-import 'src/blocs/appbloc.dart';
-import 'src/blocs/bloc_provider.dart';
+import 'src/models/appstate.dart';
 import 'src/models/theme.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(App());
 
-class MyApp extends StatefulWidget {  
+class App extends StatefulWidget {
   @override
-  MyAppState createState() {
-    return new MyAppState();
-  }
+  _AppState createState() => _AppState();
 }
 
-class MyAppState extends State<MyApp> {  
-  final bloc = AppBloc();
+class _AppState extends State<App> {
+  AppState appState;
 
   @override
   void initState() {
-    super.initState();    
-  }
-
-  @override
-  void dispose() {
-    bloc.dispose();
-    super.dispose();
+    super.initState();
+    appState = AppState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      bloc: bloc,
-      child: StreamBuilder(
-          stream: bloc.theme.outStream,
-          builder: (context, AsyncSnapshot<AppTheme> snapshot) {
-            return MaterialApp(
-              title: "Theme and drawer starter app",
-                theme: snapshot.hasData
-                    ? _buildThemeData(snapshot.data)
-                    : ThemeData(),
-                home: HomePage());
-          }),
+    return AppStateProvider<AppState>(
+      appState: appState,
+      child: MaterialPage(),
     );
   }
+}
 
-  _buildThemeData(AppTheme appTheme) {
+class MaterialPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var theme = AppStateProvider.of<AppState>(context).currentTheme;
+
+    return ValueBuilder<MyTheme>(
+        stream: theme,
+        builder: (context, snapshot) {
+          return MaterialApp(
+              title: "Theme and drawer starter app",
+              theme: _buildThemeData(snapshot.data),                  
+              home: HomePage());
+        });
+  }
+
+  _buildThemeData(MyTheme appTheme) {
     return ThemeData(
-      brightness: appTheme.theme.brightness,
-      backgroundColor: appTheme.theme.backgroundColor,
-      scaffoldBackgroundColor: appTheme.theme.scaffoldBackgroundColor,
-      primaryColor: appTheme.theme.primaryColor,
-      primaryColorBrightness: appTheme.theme.primaryColorBrightness,
-      accentColor: appTheme.theme.accentColor,
+      brightness: appTheme.brightness,
+      backgroundColor: appTheme.backgroundColor,
+      scaffoldBackgroundColor: appTheme.scaffoldBackgroundColor,
+      primaryColor: appTheme.primaryColor,
+      primaryColorBrightness: appTheme.primaryColorBrightness,
+      accentColor: appTheme.accentColor,
     );
   }
 }
